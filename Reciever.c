@@ -2,16 +2,15 @@
 
 int main()
 {   
-    int stayConnnect = 0;
-    char temp[1000];
     char buffer[5000];
-    double firstPartTime[20], secondPartTime[20];
+    double firstPartTime[1000], secondPartTime[1000];
     int counter = 0;
     int exitProgram = 0;
-
+    char exitOrNot[4] = {'\0'};
+    char *sample = "1111";
     int arrOneSize = 500000;
     int arrTwoSize = 500000;
-    int choise = 4;
+    int choise = 1;
 
     int server_sock = socket(AF_INET, SOCK_STREAM, 0); 
     if (server_sock < 0)
@@ -67,30 +66,24 @@ int main()
            printf("listen failed with error code\n");
            return -1;
     	}
-    	printf("A new client connection accepted\n");
+    	    printf("A new client connection accepted\n");
 
     //### struct for getting the time of each operation ###//
 
     struct timeval currentFirstTime ,lastFirstTime, currentSecondTime ,lastSecondTime;
 
     //### gets the packages of the sender, store them, and calculate the time it took to recieve them ###//
-    int xy = 0;
     while (exitProgram == 0)
     {    
-            printf("here!!");
             gettimeofday(&currentFirstTime, NULL);
             while(arrOneSize > 0)
             {
-                printf("here");
                 bzero(buffer, 5000);
                 int recieve1 = recv(clientSocket, buffer, sizeof(buffer), 0);
                 arrOneSize = arrOneSize - recieve1;
-                xy += recieve1;
-                printf("the size is: %d\n",xy);
-                printf("arr1: %d\n",arrOneSize);
             }
+
             gettimeofday(&lastFirstTime, NULL);
-            printf("time diffrence is:: %f", time_diff(&currentFirstTime, &lastFirstTime));
             firstPartTime[counter] = time_diff(&currentFirstTime, &lastFirstTime);
 
             printf("The server recieved the first half of the file succesfully!\n\n");
@@ -100,33 +93,28 @@ int main()
 
             if ( bytesSent > 0)
             {
-            printf("send ACK to the client \n\n");
+            printf("send Aute   ntication to the client \n\n");
             }
 
             setsockopt(server_sock, IPPROTO_TCP, TCP_CONGESTION, "reno", 4);
             printf ("Chanaging the CC Algorithm to reno...\n\n");
 
             gettimeofday(&currentSecondTime, NULL);
+
             while(arrTwoSize > 0)
             {
                 bzero(buffer, 5000);
                 int recieve2 = recv(clientSocket, buffer, sizeof(buffer), 0);
                 arrTwoSize = arrTwoSize - recieve2;
-                printf("the size is: %d\n",recieve2);
-                printf("arr2: %d\n",arrTwoSize);
             }
+            printf("The server recieved the second half of the file succesfully!\n\n");
 
             //### Computing the time the proccess took and putting in an arrayy ###//
-
-            printf("The server recieved the second half of the file succesfully!\n\n");
             gettimeofday(&lastSecondTime, NULL);
-            printf("time diffrence is:: %0.8f", time_diff(&currentSecondTime, &lastSecondTime));
             secondPartTime[counter] = time_diff(&currentSecondTime, &lastSecondTime);
             counter++;
 
             printf("Waiting for the client choose if he wants to continue or not...\n\n");
-            char exitOrNot[4] = {'\0'};
-            char *sample = "1111";
            
             //### getting the exit/continue message ###// 
             
@@ -136,18 +124,21 @@ int main()
 
             if ( exitOrNot[0] == sample[0] && exitOrNot[1] == sample[1] && exitOrNot[2] == sample[2] && exitOrNot[3] == sample[3])
             {
-                sleep(2);
                 exitProgram = 1;
                 choise = -1;
                 printf("The client sent an exit message, closing the socket!\n\n");
                 break;
             }
             else
+            {
                 arrOneSize = 500000;
                 arrTwoSize = 500000;
                 setsockopt(server_sock,SOL_SOCKET, TCP_CONGESTION, "cubic", 5);  // Change the CC Algorithm
                 printf ("Chanaging the CC Algorithm to cubic...\n\n");
+                printf("\n\n############## Doing the algorithm again ##############\n\n");
                 break;
+            }
+
            }
 
     }

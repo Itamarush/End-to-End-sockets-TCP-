@@ -19,6 +19,8 @@ int main()
     FILE * file1;
     file1 = fopen("text1.txt", "r");
     
+    //### Spliting The file into two arrays ###//
+
     char arr1[characters/2];
     char arr2[characters/2];
     for (size_t i = 0; i < characters; i++)
@@ -32,13 +34,9 @@ int main()
             arr2[i-characters/2] = fgetc(file1);
         }
     }
-
-    int a = sizeof(arr1);
-    int b = sizeof(arr2);
-
-    //### Now I have two arrays the contains together all the file ###//
+    //### CREATES THE SOCKET ###//
     
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0); // Creates the socket
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1)
     {
         printf("Could not create socket\n");       // Vailidation of the Socket creations..
@@ -61,7 +59,9 @@ int main()
 		return -1;
 	}
     
-    int sockcon = connect(sockfd, (struct sockaddr *) &serverAddress, sizeof(serverAddress)); // Connecting to the Server
+    //### CONNECTING TO THE SERVER ###///
+
+    int sockcon = connect(sockfd, (struct sockaddr *) &serverAddress, sizeof(serverAddress)); 
 
       if (sockcon == -1)                                                                      // Vailidation of the connections between
     {                                                                                         //  theserver      
@@ -94,7 +94,6 @@ int main()
     {
         printf("Send succesfully!\n\n");
     }
-        int xy = 0;
         
         char bufferReply[12] = {'\0'};
         char sample[] = "10010101110";
@@ -112,18 +111,16 @@ int main()
         }
         else("NO ACK");
         
-        printf("\n\nxy:%d\n\n", xy);
         printf("Do you want to send the file again? \npress 1 if yes, any other key for no\n\n");
         userChoise = 0;
         scanf("%d", &userChoise);
         
         if(userChoise == 1)
         {
-            printf("chose 1");
-            setsockopt(sockfd,SOL_SOCKET, TCP_CONGESTION, "cubic", 5);  // Change the CC Algorithm
-            printf ("Chanaging the CC Algorithm to cubic...\n\n");
             int x = send(sockfd, stayMessage, 5, 0);
             printf("Sending the server that I wanna stay and keep sending messages... \n\n");
+            setsockopt(sockfd,SOL_SOCKET, TCP_CONGESTION, "cubic", 5);  // Change the CC Algorithm
+            printf ("Chanaging the CC Algorithm to cubic...\n\n");
         }
 
         if (userChoise != 1)
