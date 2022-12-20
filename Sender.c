@@ -23,6 +23,10 @@ int main()
 
     char arr1[characters/2];
     char arr2[characters/2];
+    int arrOneSize = 500000;
+    int arrTwoSize = 500000;
+    int bytesSent2;
+    
     for (size_t i = 0; i < characters; i++)
     {
         if (i< characters/2)
@@ -83,7 +87,11 @@ int main()
     {  
         printf("Sending the first half of the file...\n\n");
 
-         bytesSent = send(sockfd, arr1, sizeof(arr1), 0);
+         while (arrOneSize > 0)
+         {
+            bytesSent = send(sockfd, arr1, sizeof(arr1), 0);
+            arrOneSize -= bytesSent;
+         }
 
         if ( bytesSent == 0 || bytesSent == -1)
     {
@@ -105,7 +113,12 @@ int main()
             setsockopt(sockfd, IPPROTO_TCP, TCP_CONGESTION, "reno", 4);
             printf ("Chanaging the CC Algorithm to reno...\n\n");
 
-            int bytesSent = send(sockfd, arr2, sizeof(arr2), 0); // Send the second part of the file
+        while (arrTwoSize > 0)
+        {
+            bytesSent2 = send(sockfd, arr2, sizeof(arr2), 0); // Send the second part of the file
+
+            arrTwoSize -= bytesSent2;
+        }
 
             printf ("Sending the second part of the file...\n\n");
         }
@@ -121,6 +134,8 @@ int main()
             printf("Sending the server that I wanna stay and keep sending messages... \n\n");
             setsockopt(sockfd,SOL_SOCKET, TCP_CONGESTION, "cubic", 5);  // Change the CC Algorithm
             printf ("Chanaging the CC Algorithm to cubic...\n\n");
+            arrOneSize = 500000;
+            arrTwoSize = 500000;
         }
 
         if (userChoise != 1)
