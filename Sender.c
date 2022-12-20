@@ -71,10 +71,6 @@ int main()
     {
         printf("Connected to server succesfully!\n\n");
     }
-
-    
-    char temp[1000];
-    int bool = 1;
     int userChoise = 1;
     char *exitMessage = "1111";
     int exitMessageLen = strlen(exitMessage) + 1;
@@ -82,20 +78,13 @@ int main()
     int stayMessageLen = strlen(exitMessage) + 1;
     int i = 0;
     int bytesSent;
-    int xz= 0;
-    printf ("\n\nsize of arr1: %ld\n\n", sizeof(arr1));
-    printf ("\n\nsize of arr2: %ld\n\n", sizeof(arr2));
+
     while (userChoise == 1)
     {  
         printf("Sending the first half of the file...\n\n");
-        // while(i < 500000 )
-        // {
-            bytesSent = send(sockfd, arr1, sizeof(arr1), 0);
-        // i = i+5000;
-        // xz += bytesSent;
-        // }
-        i = 0;
-        printf("\n\nxz:%d\n\n", xz);
+
+         bytesSent = send(sockfd, arr1, sizeof(arr1), 0);
+
         if ( bytesSent == 0 || bytesSent == -1)
     {
         printf("didnt send\n\n");
@@ -108,27 +97,17 @@ int main()
         int xy = 0;
         
         char bufferReply[12] = {'\0'};
-        char sample[] = "10010101110";  
-        printf("\n\nhekk\n\n");
+        char sample[] = "10010101110";
         int bytesReceived = recv(sockfd, bufferReply, 12, 0);
-        printf("hezzzz");
-        int zz = bytesReceived;
-        printf("\n\nzz is:%d\n\n", zz);
-        puts(bufferReply);
-        puts(sample);
-        if (1)
+        if (strcmp(sample, bufferReply) == 0)
         {
             printf("The server send an Authentication!\n\n");
 
             setsockopt(sockfd, IPPROTO_TCP, TCP_CONGESTION, "reno", 4);
             printf ("Chanaging the CC Algorithm to reno...\n\n");
-            // while(i < 500000)
-            // {
+
             int bytesSent = send(sockfd, arr2, sizeof(arr2), 0); // Send the second part of the file
-            // xy += bytesSent;
-            // i = i + 5000;
-            // }
-            i = 0;
+
             printf ("Sending the second part of the file...\n\n");
         }
         else("NO ACK");
@@ -145,8 +124,6 @@ int main()
             printf ("Chanaging the CC Algorithm to cubic...\n\n");
             int x = send(sockfd, stayMessage, 5, 0);
             printf("Sending the server that I wanna stay and keep sending messages... \n\n");
-            int ww = x;
-            printf("\n\nwwwwww is:%d\n\n", ww);
         }
 
         if (userChoise != 1)
