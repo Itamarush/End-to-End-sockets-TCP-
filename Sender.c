@@ -26,7 +26,7 @@ int main()
     int arrOneSize = 500000;
     int arrTwoSize = 500000;
     int bytesSent2;
-    
+
     for (size_t i = 0; i < characters; i++)
     {
         if (i< characters/2)
@@ -83,16 +83,21 @@ int main()
     int i = 0;
     int bytesSent;
 
+
     while (userChoise == 1)
     {  
+        int pointer = 0;
         printf("Sending the first half of the file...\n\n");
 
          while (arrOneSize > 0)
          {
-            bytesSent = send(sockfd, arr1, sizeof(arr1), 0);
-            arrOneSize -= bytesSent;
-         }
 
+            bytesSent = send(sockfd, arr1 + pointer, 5000, 0);
+            arrOneSize -= bytesSent;
+            pointer += 5000;
+         }
+        
+        pointer = 0;
         if ( bytesSent == 0 || bytesSent == -1)
     {
         printf("didnt send\n\n");
@@ -115,9 +120,9 @@ int main()
 
         while (arrTwoSize > 0)
         {
-            bytesSent2 = send(sockfd, arr2, sizeof(arr2), 0); // Send the second part of the file
-
+            bytesSent2 = send(sockfd, arr2 + pointer, 5000, 0); // Send the second part of the file
             arrTwoSize -= bytesSent2;
+            pointer += 5000;
         }
 
             printf ("Sending the second part of the file...\n\n");
