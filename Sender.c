@@ -14,8 +14,6 @@ int main()
         characters++;    // counting the number of characters in the file
     }
 
-    printf("The number of characters in the file is: %d", characters);
-
     FILE * file1;
     file1 = fopen("text1.txt", "r");
     
